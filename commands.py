@@ -5,10 +5,13 @@ from random import randint as rnd
 
 @dp.message_handler(commands=['start'])
 async def start_bot(message: types.Message):
+    img = open('konfetki.jpeg', 'rb')
+    await bot.send_photo(message.chat.id, img)
     await bot.send_message(message.from_user.id, text=f'{message.from_user.first_name}, '
                                                       f'приветствую тебя в игре Ника и Конфетки! '
                                                       f'Вызвав команду /help ты можешь ознакомиться с правилами игры.\n'
-                                                      f'Если готов – бросай кубик (нажми 0 или 1).')
+                                                      f'Если ты готов – нажми команду \n'
+                                                      f'/lottery, чтобы кинуть жребий.')
 
 
 
@@ -21,104 +24,60 @@ async def help_bot(message: types.Message):
                                                       f'Выигрывает тот, кто последний заберёт оставшиеся на столе конфеты.\n'
                                                       f'Если ты готов – нажимай /start. Да начнётся битва!')
 
-total_sweets = 150
-turn = 0
 
-
-@dp.message_handler()
+@dp.message_handler(commands=['lottery'])
 async def first_move(message: types.Message):
-    global turn
-    if message.text.isdigit():
-        if int(message.text) != 0 and int(message.text) != 1:
-            await message.reply(f'Введи 0 или 1.')
-        else:
-            draw = rnd(0, 1)
-            if int(message.text) == draw:
-                await message.reply(f'Жребий равен {draw}. {message.from_user.first_name}, да ты счастливчик! Ходи первым :)')
-                turn = 1
-            else:
-                await message.reply(f'Жребий равен {draw}. Хехе, первый ход за ботом.')
-                turn = 2
-    else:
-        await message.reply(f'Введи цифру 0 или 1 (а не слово)!')
+    await bot.send_message(message.from_user.id, text=f'Кидай жребий: набери 100 или 101')
 
+
+@dp.message_handler(text='100' or '101')
+async def lottery(message: types.Message):
+    draw = rnd(100, 101)
+    if int(message.text) == draw:
+        await message.reply(f'Жребий равен {draw}. {message.from_user.first_name}, да ты счастливчик! На столе сейчас 150 конфет.\n'
+                            f'Ходи первым :)')
+    else:
+        await message.reply(f'Жребий равен {draw}. Хехе, первый ход за ботом.')
+        await bot_turn(message)
+
+
+total_sweets = 150
+
+async def bot_turn(message: types.Message):
+    global total_sweets
+    take_sweets_bot = total_sweets % 29 if total_sweets % 29 != 0 else rnd(1, 28)
+    total_sweets -= take_sweets_bot
+    await bot.send_message(message.from_user.id, text=f'Бот взял со стола {take_sweets_bot} конфет. На столе осталось {total_sweets} конфет.')
+    if total_sweets > 0:
+        await bot.send_message(message.from_user.id, text=f'Твоя очередь, человек!')
+    else:
+        await bot.send_message(message.from_user.id, text=f'Эх, а бот оказался умнее тебя :( Бот победил!')
+        total_sweets = 150
+        await bot.send_message(message.from_user.id, text=f'Сыграем заново?) Жмакай /start!')
 
 
 @dp.message_handler()
 async def player_turn(message: types.Message):
     global total_sweets
-    global turn
-    if turn == 1:
-        if total_sweets > 0:
-            if message.text.isdigit():
-                total_sweets -= int(message.text)
-                if 0 < int(message.text) < 29:
-                    await bot.send_message(message.from_user.id, text=f'{message.from_user.first_name} взял со стола '
-                                                                      f'{message.text} конфет.\n'
-                                                                      f'На столе осталось {total_sweets} кофет.\n'
-                                                                      f'Очередь бота.')
-                else:
-                    await message.reply(f'Возьми-ка поменьше конфет!')
+    if message.text.isdigit():
+        if 0 < int(message.text) < 29:
+            total_sweets -= int(message.text)
+            await bot.send_message(message.from_user.id, text=f'{message.from_user.first_name} взял со стола '
+                                                              f'{message.text} конфет.\n'
+                                                              f'На столе осталось {total_sweets} конфет.')
+            if total_sweets > 0:
+                await bot_turn(message)
             else:
-                await message.reply(f'Эй, нужно ввести число!')
+                await bot.send_message(message.from_user.id, text=f'Ух ты, ты обыграл искуственный интеллект, поздравляю!')
+                total_sweets = 150
+                await bot.send_message(message.from_user.id, text=f'Сыграем заново?) Жмакай /start!')
         else:
-            await message.reply(f'Эх, а бот оказался умнее тебя :( Бот победил!\n'
-                                f'Сыграем заново? Жми /start!')
+            await bot.send_message(message.from_user.id, text=f'Возьми-ка поменьше конфет!')
+    else:
+        await bot.send_message(message.from_user.id, text=f'Эй, нужно ввести число!')
 
 
 
 
 
 
-
-
-
-
-
-# total_sweets = 150
-# player_sweets = 0
-# bot_sweets = 0
-# take_sweets = 0
-#
-#
-# def FirstMove():
-#     draw = rnd(0, 1)
-#     print(f'Жребий = {draw}')
-#     if draw == 0:
-#         PlayerTurn()
-#     else:
-#         BotTurn()
-#
-#
-# def PlayerTurn():
-#     global take_sweets
-#     global total_sweets
-#     global player_sweets
-#     take_sweets = int(input(f'На столе сейчас {total_sweets}. Сколько конфет вы хотите взять? '))
-#     while take_sweets > total_sweets or take_sweets > 28 or take_sweets <= 0:
-#         take_sweets = int(input('Вы играете не по правилам! Возьмите количество конфет от 1 до 28: '))
-#     total_sweets -= take_sweets
-#     player_sweets += take_sweets
-#     if total_sweets > 0:
-#         BotTurn()
-#     else:
-#         print('Поздравляю! Вы победили!')
-#
-#
-# def BotTurn():
-#     global take_sweets
-#     global total_sweets
-#     global bot_sweets
-#     if total_sweets % 29 != 0:
-#         take_sweets = total_sweets % 29
-#     else:
-#         take_sweets = rnd(1, 28)
-#     total_sweets -= take_sweets
-#     bot_sweets += take_sweets
-#     print(f'Бот взял {take_sweets} конфет.')
-#     if total_sweets > 0:
-#         PlayerTurn()
-#     else:
-#         print('Бот красавчик!')
-#
-# FirstMove()
