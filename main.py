@@ -2,6 +2,7 @@ from aiogram.utils import executor
 from commands import dp
 
 
+
 async def bot_start(_):
     print('Бот запущен!')
 

@@ -3,6 +3,7 @@ from aiogram import types
 from random import randint as rnd
 
 
+
 @dp.message_handler(commands=['start'])
 async def start_bot(message: types.Message):
     img = open('konfetki.jpeg', 'rb')
