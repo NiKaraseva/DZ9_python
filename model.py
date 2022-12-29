@@ -1,13 +1,20 @@
 total_sweets = 150
 player = ''
-new_game = False
+game = False
+bot_level = 'Light'
 
 def new_game():
-    global new_game
-    if new_game:
-        new_game = False
+    global game
+    global total_sweets
+    if game:
+        game = False
     else:
-        new_game = True
+        total_sweets = 150
+        game = True
+
+def check_game():
+    global game
+    return game
 
 def get_total():
     global total_sweets
@@ -18,6 +25,14 @@ def take_sweets(take: int):
     total_sweets -= take
 
 
+def change_level():
+    global bot_level
+    if bot_level == 'Light':
+        bot_level = 'Hard'
+    else:
+        bot_level = 'Light'
 
 
-
+def get_bot_level():
+    global bot_level
+    return bot_level

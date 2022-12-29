@@ -1,17 +1,18 @@
 import random
 from aiogram.dispatcher.filters import Text
+import bot_turn
 from bot_config import dp
 from aiogram.types import Message
 import view
-import handlers
 
 
-@dp.message_handler(Text(equals=('орел', 'решка')))
+@dp.message_handler(Text(equals=('Орел', 'Решка')))
 async def lottery_bot(message: Message):
-    draw = random.shuffle('орел', 'решка')
+    draw_list = ['Орел', 'Решка']
+    draw = random.choice(draw_list)
     if message.text == draw:
-        await view.toss_true(message)
+        await view.toss_true(message, draw)
     else:
-        await view.toss_false(message)
-        await handlers.bot_turn(message)
+        await view.toss_false(message, draw)
+        await bot_turn.bot_turn(message)
 
