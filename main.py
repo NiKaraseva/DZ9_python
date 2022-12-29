@@ -1,6 +1,5 @@
 from aiogram.utils import executor
-from commands import dp
-
+from handlers import dp
 
 
 async def bot_start(_):
