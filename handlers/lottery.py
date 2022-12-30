@@ -6,6 +6,7 @@ from aiogram.types import Message
 import view
 
 
+
 @dp.message_handler(Text(equals=('Орел', 'Решка')))
 async def lottery_bot(message: Message):
     draw_list = ['Орел', 'Решка']

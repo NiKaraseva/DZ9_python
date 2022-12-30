@@ -3,6 +3,7 @@ import view
 import model
 
 
+
 async def bot_turn(message):
     total = model.get_total()
     if model.get_bot_level() == 'Light':

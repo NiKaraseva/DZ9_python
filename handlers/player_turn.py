@@ -5,6 +5,7 @@ from aiogram.types import Message
 import model
 
 
+
 @dp.message_handler()
 async def player_turn(message: Message):
     if model.check_game():

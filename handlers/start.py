@@ -3,6 +3,8 @@ from aiogram.types import Message
 import view
 
 
+
+
 @dp.message_handler(commands=['start'])
 async def start_bot(message: Message):
     img = open('konfetki.jpeg', 'rb')

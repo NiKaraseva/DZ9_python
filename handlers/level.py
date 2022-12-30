@@ -4,6 +4,7 @@ import model
 import view
 
 
+
 @dp.message_handler(commands=['level'])
 async def level_bot(message: Message):
     if not model.check_game():

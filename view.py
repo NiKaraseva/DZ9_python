@@ -1,14 +1,14 @@
 from aiogram.types import Message
 from bot_config import bot
 import model
+from keyboards import kb_menu
+from keyboards import kb_inline
 
 
 async def start_game(message: Message):
     await bot.send_message(message.from_user.id, text=f'{message.from_user.first_name}, '
                                                       f'приветствую тебя в игре Никины Конфетки! '
-                                                      f'С помощью команды /help на клавиатуре ты можешь ознакомиться с правилами игры.\n'
-                                                      f'С помощью команды /level на клавиатуре ты можешь выбрать уровень игры.\n'
-                                                      f'Для начала игры нажми /new_game.')
+                                                      f'Выбери один из пунктов меню ниже.', reply_markup=kb_menu)
 
 
 async def help_game(message: Message):
@@ -17,20 +17,20 @@ async def help_game(message: Message):
                                                       f'Условия игры: на столе лежит 150 конфет, право первого хода определяется '
                                                       f'рандомом. За один ход можно забрать не более 28 конфет.\n'
                                                       f'Выигрывает тот, кто последний заберёт оставшиеся на столе конфеты.\n'
-                                                      f'Если ты готов – нажимай /start. Да начнётся битва!')
+                                                      f'Если ты готов – нажимай /new_game. Да начнётся битва!')
 
 
 async def toss_game(message: Message):
-    await bot.send_message(message.from_user.id, text=f'Кидай жребий: напиши «Орел» или «Решка»')
+    await bot.send_message(message.from_user.id, text=f'Кидай жребий: напиши «Орел» или «Решка»', reply_markup=kb_inline)
 
 
 async def toss_true(message: Message, draw_text):
     await message.reply(text=f'Результат жеребьёвки: {draw_text}. {message.from_user.first_name}, да ты счастливчик! На столе сейчас 150 конфет.\n'
-                            f'Ходи первым :)')
+                            f'Ходи первым :)', reply_markup=kb_menu)
 
 
 async def toss_false(message: Message, draw_text):
-    await message.reply(text=f'Результат жеребьёвки: {draw_text}. Хехе, первый ход за ботом.')
+    await message.reply(text=f'Результат жеребьёвки: {draw_text}. Хехе, первый ход за ботом.', reply_markup=kb_menu)
 
 
 async def take_zero(message: Message):

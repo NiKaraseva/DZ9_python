@@ -3,6 +3,7 @@ player = ''
 game = False
 bot_level = 'Light'
 
+
 def new_game():
     global game
     global total_sweets
